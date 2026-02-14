@@ -1,53 +1,129 @@
 ---
-- name: Configure and Deploy Node.js Application
-  hosts: node_servers
-  become: true # Required for installing packages
+- name: "🚀 Deploy Node.js App to DigitalOcean (PM2 + systemd Hybrid)"
+  hosts: nodejs_servers
+  become: true
+  gather_facts: true
 
   tasks:
-    - name: Update apt cache
+    - name: "✅ Phase 1: Update package cache"
       apt:
-        update_cache: true
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
 
-    - name: Install required packages
+    - name: "✅ Phase 2: Install required packages"
       apt:
         name:
           - curl
-          - nodejs
-          - npm
+          - gnupg
+          - ca-certificates
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: "✅ Phase 3: Add NodeSource GPG key"
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
         state: present
 
-    - name: Create application user
+    - name: "✅ Phase 4: Install Node.js v{{ node_version }} + npm"
+      apt:
+        name: nodejs
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+      environment:
+        NODE_VERSION: "{{ node_version }}"
+      register: nodejs_install
+
+    - name: "⚠️ Verify npm exists after installation"
+      command: which npm
+      register: npm_check
+      failed_when: npm_check.rc != 0
+      when: nodejs_install.changed
+      ignore_errors: false
+
+    - name: "✅ Phase 5: Create dedicated app user (security best practice!)"
       user:
         name: "{{ app_user }}"
         create_home: yes
         shell: /bin/bash
+        system: no
+      register: app_user_created
 
-    - name: Create app directory
+    - name: "✅ Phase 6: Create app directory with proper permissions"
       file:
-        path: "{{ app_directory }}"
+        path: "{{ app_dir }}"
         state: directory
         owner: "{{ app_user }}"
         group: "{{ app_user }}"
         mode: "0755"
 
-    - name: Copy Node.js application file
+    - name: "✅ Phase 7: Copy app.js to server"
       copy:
-        src: ../files/app.js
-        dest: "{{ app_directory }}/app.js"
+        src: "{{ playbook_dir }}/../files/app.js"
+        dest: "{{ app_dir }}/app.js"
         owner: "{{ app_user }}"
         group: "{{ app_user }}"
         mode: "0644"
 
-    - name: Install PM2 globally
-      npm:
-        name: pm2
-        global: true
-
-    - name: Start Node.js app using PM2
-      become_user: "{{ app_user }}"
-      shell: |
-        pm2 start {{ app_directory }}/app.js --name nodeapp
+    - name: "✅ Phase 8: Install PM2 globally (process manager)"
+      command: npm install -g pm2
       args:
-        creates: "/home/{{ app_user }}/.pm2"
+        creates: /usr/local/bin/pm2
+      environment:
+        PATH: "/usr/bin:/usr/local/bin:{{ ansible_env.PATH }}"
 
-      # creates ensures idempotency
+    - name: "✅ Phase 9: Create PM2 ecosystem config"
+      template:
+        src: "{{ playbook_dir }}/../templates/ecosystem.config.js.j2"
+        dest: "{{ app_dir }}/ecosystem.config.js"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0644"
+
+    - name: "✅ Phase 10: Create systemd service for PM2 (auto-start on reboot)"
+      template:
+        src: "{{ playbook_dir }}/../templates/pm2-systemd.service.j2"
+        dest: /etc/systemd/system/node-app.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: "✅ Phase 11: Enable and start PM2 service via systemd"
+      systemd:
+        name: node-app
+        state: started
+        enabled: yes
+        daemon_reload: yes
+      register: service_start
+
+    - name: "✅ Phase 12: Allow port {{ app_port }} in firewall (UFW)"
+      ufw:
+        rule: allow
+        port: "{{ app_port }}"
+        proto: tcp
+      ignore_errors: false # UFW might not be installed
+
+    # - name: "✅ Phase 13: Wait for app to respond (health check)"
+    #   wait_for:
+    #     host: "{{ ansible_default_ipv4.address }}"
+    #     port: "{{ app_port }}"
+    #     timeout: 30
+    #   when: service_start.changed
+
+    - name: "🎉 SUCCESS! Deployment complete"
+      debug:
+        msg: |
+          ✅✅✅ DEPLOYMENT SUCCESSFUL ✅✅✅
+
+          🌐 App URL: http://{{ ansible_host }}:{{ app_port }}
+
+          🔍 Test it now:
+             curl http://{{ ansible_host }}:{{ app_port }}
+
+          🖥️  Server IP: {{ ansible_host }}
+          👤 App user: {{ app_user }}
+          📁 App directory: {{ app_dir }}
+
+          💡 Pro Tip: View logs with:
+             ssh root@{{ ansible_host }} -t 'sudo -u {{ app_user }} pm2 logs'

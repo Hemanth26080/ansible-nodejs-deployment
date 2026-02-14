@@ -1,0 +1,12 @@
+---
+# =============== APP CONFIG ===============
+app_user: "nodeapp"
+app_dir: "/opt/nodejs-app"
+app_port: 3000
+
+# =============== NODE.JS VERSION ===============
+node_version: "20"  # LTS version (stable for production)
+
+# =============== SECURITY ===============
+# ⚠️ AFTER SUCCESSFUL DEPLOYMENT, set to "no" to disable root SSH
+ssh_permit_root_login: "yes"

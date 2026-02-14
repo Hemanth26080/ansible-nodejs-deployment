@@ -1,2 +1,2 @@
-[node_servers]
-178.128.2.13 ansible_user=root 
+[nodejs_servers]
+64.226.73.132 ansible_user=root
