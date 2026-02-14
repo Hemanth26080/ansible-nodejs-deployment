@@ -624,9 +624,6 @@ If you encounter issues:
 ### App Response
 ![App Response](screenshots/app-response.png)
 
-### PM2 Status
-![PM2 Status](screenshots/pm2-status.png)
-
 > 💡 **Add your own screenshots** after deployment and update paths above!
 
 ---
@@ -649,60 +646,11 @@ If this project helped you, please give it a star! ⭐
 
 ---
 
-**Made with ❤️ by [Your Name]**  
+**Made with ❤️ by [Hemanth]**  
 *Deploying applications, one automation at a time*
 
 [![Twitter](https://img.shields.io/badge/Twitter-@yourhandle-1DA1F2?logo=twitter)](https://twitter.com/yourhandle)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Your%20Name-0077B5?logo=linkedin)](https://linkedin.com/in/yourprofile)
-[![GitHub](https://img.shields.io/badge/GitHub-@yourusername-181717?logo=github)](https://github.com/yourusername)
+[![GitHub](https://img.shields.io/badge/GitHub-@yourusername-181717?logo=github)](https://github.com/Hemanth26080)
 
 </div>
-```
-
----
-
-## 🎯 What Makes This README Professional?
-
-| Feature | Why It Matters |
-|---------|----------------|
-| **Comprehensive TOC** | Easy navigation for users |
-| **Badges** | Visual credibility + quick info |
-| **Step-by-Step Guide** | Beginner-friendly onboarding |
-| **Troubleshooting Table** | Saves hours of debugging |
-| **Security Section** | Shows production readiness |
-| **Learning Outcomes** | Demonstrates educational value |
-| **Next Steps** | Guides continued learning |
-| **Professional Formatting** | GitHub best practices |
-| **Screenshots Section** | Visual proof of working project |
-| **Contributing Guide** | Open-source ready |
-
----
-
-## 📝 How to Use This README
-
-1. **Save as `README.md`** in your project root
-2. **Replace placeholders**:
-   - `yourusername` → your GitHub username
-   - `your_email@example.com` → your email
-   - `yourhandle` → your Twitter handle
-   - `Your Name` → your name
-   - `Your Profile` → your LinkedIn profile
-3. **Add screenshots** after deployment to `screenshots/` folder
-4. **Push to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Add professional README"
-   git push origin main
-   ```
-
----
-
-## 🏆 Result: Your GitHub Profile Will Look Like This
-
-✅ **Green squares** on contribution graph  
-✅ **Professional README** with badges  
-✅ **Clear documentation** for recruiters  
-✅ **Production-ready project** in portfolio  
-✅ **Ready to share** on LinkedIn/Twitter  
-
-**You're now a DevOps engineer with a portfolio-worthy project!** 🚀🎉
