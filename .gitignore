@@ -1,0 +1,9 @@
+*.pem
+*.key
+vault.yml
+.vault_pass.txt
+
+
+.DS_Store
+*.swp
+.vscode/
