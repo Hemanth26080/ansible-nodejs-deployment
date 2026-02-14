@@ -1,6 +1,3 @@
-# 🚀 Professional README.md (GitHub-Ready, Production-Grade)
-
-```markdown
 # 🌐 Ansible Node.js Deployment to DigitalOcean
 
 <div align="center">
