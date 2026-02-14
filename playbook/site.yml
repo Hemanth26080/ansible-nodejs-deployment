@@ -1,0 +1,53 @@
+---
+- name: Configure and Deploy Node.js Application
+  hosts: node_servers
+  become: true # Required for installing packages
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: true
+
+    - name: Install required packages
+      apt:
+        name:
+          - curl
+          - nodejs
+          - npm
+        state: present
+
+    - name: Create application user
+      user:
+        name: "{{ app_user }}"
+        create_home: yes
+        shell: /bin/bash
+
+    - name: Create app directory
+      file:
+        path: "{{ app_directory }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0755"
+
+    - name: Copy Node.js application file
+      copy:
+        src: ../files/app.js
+        dest: "{{ app_directory }}/app.js"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0644"
+
+    - name: Install PM2 globally
+      npm:
+        name: pm2
+        global: true
+
+    - name: Start Node.js app using PM2
+      become_user: "{{ app_user }}"
+      shell: |
+        pm2 start {{ app_directory }}/app.js --name nodeapp
+      args:
+        creates: "/home/{{ app_user }}/.pm2"
+
+      # creates ensures idempotency
