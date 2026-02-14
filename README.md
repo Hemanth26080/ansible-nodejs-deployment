@@ -622,9 +622,7 @@ If you encounter issues:
 ![Deployment Output](screenshots/deployment-success.png)
 
 ### App Response
-![App Response](screenshots/app-response.png)
-
-> 💡 **Add your own screenshots** after deployment and update paths above!
+![App Response](./screenshots/app-response.png)
 
 ---
 
